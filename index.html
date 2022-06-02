@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>MerkleTree Creator</title>
+    <script src="https://cdn.jsdelivr.net/npm/merkletreejs@latest/merkletree.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/keccak256@latest/keccak256.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.6.8/ethers.umd.min.js"></script>
+</head>
+<body>
+
+<div id="root"></div>
+
+<script type="text/javascript">
+    fetch('whitelist.json')
+        .then(response => response.json())
+        .then(data => doMerkleTree(data));
+
+    function doMerkleTree(data) {
+        const leaves = data.map(x =>
+            ethers.utils.solidityKeccak256(["address"], [x])
+        )
+        console.log(leaves);
+
+        const merkle_tree = new MerkleTree(leaves, keccak256, {
+            sortPairs: true,
+        });
+        console.log(merkle_tree);
+
+        const root = merkle_tree.getHexRoot();
+        document.getElementById('root').innerHTML = root;
+        console.log(root);
+    }
+</script>
+</body>
+</html>
